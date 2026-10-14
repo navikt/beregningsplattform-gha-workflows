@@ -33,6 +33,33 @@ jobs:
 | Eksakt versjon | `@v1.0.0` | Låst — må oppdateres manuelt |
 | Branch | `@main` | Alltid siste commit, ingen versjonskontroll |
 
+### Private Gradle-avhengigheter
+
+`gradle-build-test-app.yaml`, `codeql-scan.yaml` og `gradle-dependency-submission.yaml`
+tar imot det valgfrie secretet `READER_TOKEN`. Send det fra det kallende repoet
+når Gradle trenger lesetilgang til private pakker, for eksempel ktlint-avhengigheter:
+
+```yaml
+secrets:
+  READER_TOKEN: ${{ secrets.READER_TOKEN }}
+```
+
+Legg mappingen på jobben som kaller workflowen, ved siden av `uses` og `with`.
+`secrets: inherit` sender også tokenet hvis det er tilgjengelig for kalleren.
+Bruk en commit SHA som inneholder token-støtten.
+
+Tokenet sendes som miljøvariabelen `READER_TOKEN` til byggesteget.
+Gradle-konfigurasjonen må lese denne variabelen. `GITHUB_ACTOR` er allerede
+tilgjengelig som standard miljøvariabel i GitHub Actions.
+Workflowene oppretter ikke tokenet og erstatter ikke `GITHUB_TOKEN`.
+Begrens tokenet til lesetilgang til pakkene som byggingen trenger.
+
+Kallere uten private avhengigheter trenger ingen endringer. Uten secretet blir
+`READER_TOKEN` en tom streng. Bygg som trenger private pakker, må derfor sende
+et gyldig token. GitHub sender normalt ikke repository-secrets til PR-er fra forks
+eller Dependabot-PR-er. For Dependabot må tokenet også være konfigurert som et
+Dependabot-secret i det kallende repoet.
+
 ### Dependabot-oppsett
 
 For at dependabot skal holde SHA-er oppdatert, legg til i `.github/dependabot.yaml`:

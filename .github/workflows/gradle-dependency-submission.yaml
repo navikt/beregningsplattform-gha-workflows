@@ -2,6 +2,10 @@ name: Gradle Dependency Submission
 
 on:
   workflow_call:
+    secrets:
+      READER_TOKEN:
+        required: false
+        description: Token with read access to private Gradle dependencies
     inputs:
       java-version:
         required: false
@@ -39,5 +43,7 @@ jobs:
 
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # ratchet:gradle/actions/dependency-submission@v6.4.0
+        env:
+          READER_TOKEN: ${{ secrets.READER_TOKEN }}
         with:
           build-root-directory: ${{ inputs.project-directory }}
