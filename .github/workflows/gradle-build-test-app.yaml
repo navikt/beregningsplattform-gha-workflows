@@ -2,6 +2,10 @@ name: Build and test application
 
 on:
   workflow_call:
+    secrets:
+      READER_TOKEN:
+        required: false
+        description: Token with read access to private Gradle dependencies
     inputs:
       java-version:
         required: false
@@ -53,6 +57,7 @@ jobs:
         working-directory: ${{ inputs.project-directory }}
         env:
           GRADLE_TASK: ${{ inputs.gradle-task }}
+          READER_TOKEN: ${{ secrets.READER_TOKEN }}
         run: $GRADLE_TASK
 
       - name: Upload build artifact
