@@ -28,6 +28,11 @@ on:
         type: boolean
         default: true
         description: Use pre-built artifact from build step (requires gradle-build-and-test to run first)
+      artifact-name:
+        required: false
+        type: string
+        default: "gradle-build"
+        description: Artifact name prefix. The artifact is named <artifact-name>-<run_id>. Must match artifact-name in gradle-build-test-app.
     outputs:
       image:
         description: Google Artifact Registry image
@@ -51,7 +56,7 @@ jobs:
         if: ${{ inputs.use-artifact == true }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # ratchet:actions/download-artifact@v8.0.2
         with:
-          name: gradle-build-${{ github.run_id }}
+          name: ${{ inputs.artifact-name }}-${{ github.run_id }}
           path: ${{ inputs.docker-context }}/build/
 
       - name: Push Docker Image to GAR
