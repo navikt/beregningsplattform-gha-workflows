@@ -2,6 +2,10 @@ name: CodeQL Scan
 
 on:
   workflow_call:
+    secrets:
+      READER_TOKEN:
+        required: false
+        description: Token with read access to private Gradle dependencies
     inputs:
       language:
         required: true
@@ -58,6 +62,7 @@ jobs:
         working-directory: ${{ inputs.project-directory }}
         env:
           BUILD_COMMAND: ${{ inputs.build-command }}
+          READER_TOKEN: ${{ secrets.READER_TOKEN }}
         run: $BUILD_COMMAND
 
       - name: Perform CodeQL Analysis
