@@ -80,7 +80,7 @@ For å teste endringer før de merges inn i main:
 Nye releases lages ved å pushe en tag:
 
 ```bash
-git tag -a v1.0.0 -m "Beskrivelse av endringen"
+git tag v1.0.0
 git push origin v1.0.0
 ```
 
