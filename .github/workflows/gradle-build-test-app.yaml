@@ -23,6 +23,16 @@ on:
         type: boolean
         default: false
         description: Upload build artifact for Docker image builds
+      artifact-directory:
+        required: false
+        type: string
+        default: ""
+        description: Module directory, relative to repo root, whose build/ is uploaded. Defaults to project-directory.
+      artifact-name:
+        required: false
+        type: string
+        default: "gradle-build"
+        description: Artifact name prefix. The artifact is named <artifact-name>-<run_id>. Must be unique per run when called from a matrix.
 
 jobs:
   build-and-test:
@@ -59,6 +69,6 @@ jobs:
         if: ${{ inputs.upload-artifact == true }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # ratchet:actions/upload-artifact@v7.0.2
         with:
-          name: gradle-build-${{ github.run_id }}
-          path: ${{ inputs.project-directory }}/build/
+          name: ${{ inputs.artifact-name }}-${{ github.run_id }}
+          path: ${{ format('{0}/build/', inputs.artifact-directory || inputs.project-directory) }}
           retention-days: 1
